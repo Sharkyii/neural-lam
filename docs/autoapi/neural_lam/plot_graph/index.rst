@@ -26,5 +26,3 @@ Module Contents
 
 .. py:data:: MESH_LEVEL_DIST
    :value: 0.2
-
-

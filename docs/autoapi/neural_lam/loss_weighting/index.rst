@@ -50,5 +50,3 @@ Module Contents
 
    :returns: List of floats containing the state feature weights.
    :rtype: list[float]
-
-

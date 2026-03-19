@@ -83,5 +83,3 @@ Module Contents
 
 
    .. py:attribute:: num_levels
-
-

@@ -89,4 +89,3 @@ Module Contents
 .. py:function:: save_edges_list(graphs, name, base_path)
 
 .. py:function:: sort_nodes_internally(nx_graph)
-

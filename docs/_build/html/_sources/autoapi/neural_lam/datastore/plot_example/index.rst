@@ -35,5 +35,3 @@ Module Contents
 
    :returns: Matplotlib figure object.
    :rtype: Figure
-
-

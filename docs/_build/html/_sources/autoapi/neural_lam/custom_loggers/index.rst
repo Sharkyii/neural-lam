@@ -39,5 +39,3 @@ Module Contents
 
       :returns: Path to the directory where the artifacts are saved.
       :rtype: str
-
-

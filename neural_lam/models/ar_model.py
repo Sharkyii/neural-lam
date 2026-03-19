@@ -348,7 +348,8 @@ class ARModel(pl.LightningModule):
 
             - ``init_states``: ``(B, 2, num_grid_nodes, d_features)``
             - ``target_states``: ``(B, pred_steps, num_grid_nodes, d_features)``
-            - ``forcing_features``: ``(B, pred_steps, num_grid_nodes, d_forcing)``
+            - ``forcing_features``: ``(B, pred_steps, num_grid_nodes,
+              d_forcing)``
               where index 0 corresponds to index 1 of init_states
             - ``batch_times``: time indices for the batch
         """

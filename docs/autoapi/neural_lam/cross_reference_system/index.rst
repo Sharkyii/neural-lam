@@ -175,6 +175,3 @@ Module Contents
    .. py:attribute:: references
       :type:  List[CrossReference]
       :value: []
-
-
-

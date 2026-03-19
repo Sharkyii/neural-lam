@@ -8,6 +8,7 @@ Usage:
     python docs/scripts/validate_docs.py [--strict]
 """
 
+# Standard library
 import argparse
 import inspect
 import sys
@@ -31,6 +32,7 @@ def run_docstring_validation(strict: bool = False) -> int:
         Number of errors found.
     """
     try:
+        # First-party
         import neural_lam
         from neural_lam.docstring_validator import validate_function
     except ImportError as e:
@@ -43,8 +45,9 @@ def run_docstring_validation(strict: bool = False) -> int:
     print("Running docstring validation...")
 
     # Walk all public modules
-    import pkgutil
+    # Standard library
     import importlib
+    import pkgutil
 
     for importer, modname, ispkg in pkgutil.walk_packages(
         path=neural_lam.__path__,
@@ -89,10 +92,13 @@ def run_api_consistency_check() -> int:
     print("\nRunning API consistency check...")
 
     try:
-        from neural_lam.doc_sync import SourceChangeDetector, ConsistencyChecker
-        import neural_lam
-        import pkgutil
+        # Standard library
         import importlib
+        import pkgutil
+
+        # First-party
+        import neural_lam
+        from neural_lam.doc_sync import ConsistencyChecker, SourceChangeDetector
     except ImportError as e:
         print(f"[ERROR] Could not import modules: {e}")
         return 1
@@ -123,7 +129,10 @@ def run_api_consistency_check() -> int:
 
             issues = checker.check_consistency(documented, existing, modname)
             for issue in issues:
-                print(f"  [WARN] {modname}: '{issue.element_name}' documented but not in source")
+                print(
+                    f"  [WARN] {modname}: '{issue.element_name}'"
+                    " documented but not in source"
+                )
                 issues_count += 1
 
     print(f"API consistency check: {issues_count} issues found")
@@ -146,7 +155,12 @@ def run_toc_validation() -> int:
         return 1
 
     try:
-        from neural_lam.toc_integration import load_toc, get_api_reference_section
+        # First-party
+        from neural_lam.toc_integration import (
+            get_api_reference_section,
+            load_toc,
+        )
+
         toc = load_toc(str(toc_path))
         api_ref = get_api_reference_section(toc)
 

@@ -76,5 +76,3 @@ Module Contents
    :type toc_path: str
    :param toc_data: TOC structure to save.
    :type toc_data: Dict[str, Any]
-
-

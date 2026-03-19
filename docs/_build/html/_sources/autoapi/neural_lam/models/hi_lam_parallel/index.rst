@@ -38,5 +38,3 @@ Module Contents
 
 
    .. py:attribute:: edge_split_sections
-
-

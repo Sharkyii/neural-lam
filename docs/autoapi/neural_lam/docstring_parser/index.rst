@@ -47,6 +47,3 @@ Module Contents
 
    .. py:attribute:: numpy_sections
       :value: ['Parameters', 'Returns', 'Raises', 'Examples', 'Notes', 'See Also']
-
-
-

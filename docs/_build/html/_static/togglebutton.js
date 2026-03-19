@@ -132,7 +132,7 @@ var toggleHidden = (button) => {
 var syncToggleHint = (button) => {
   const target = button.dataset["target"];
   const itemToToggle = document.getElementById(target);
-  
+
   if (itemToToggle && itemToToggle.classList.contains("toggle-hidden")) {
     button.dataset.toggleHint = toggleHintShow;
     button.setAttribute("aria-expanded", false);

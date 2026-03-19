@@ -156,5 +156,3 @@ Module Contents
 
    :returns: **logger** -- Logger object.
    :rtype: pytorch_lightning.loggers.base
-
-

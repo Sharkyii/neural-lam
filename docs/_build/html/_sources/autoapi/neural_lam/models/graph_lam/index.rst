@@ -51,5 +51,3 @@ Module Contents
 
 
    .. py:attribute:: processor
-
-

@@ -77,5 +77,3 @@ Module Contents
 
 
    .. py:attribute:: mesh_up_same_gnns
-
-

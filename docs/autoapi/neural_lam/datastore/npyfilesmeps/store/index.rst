@@ -244,5 +244,3 @@ Module Contents
 
 .. py:data:: TOA_SW_DOWN_FLUX_FILENAME_FORMAT
    :value: 'nwp_toa_downwelling_shortwave_flux_{analysis_time:%Y%m%d%H}.npy'
-
-

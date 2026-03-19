@@ -28,5 +28,3 @@ Module Contents
 
    Plot errors over spatial map
    Error and obs_mask has shape (N_grid,)
-
-

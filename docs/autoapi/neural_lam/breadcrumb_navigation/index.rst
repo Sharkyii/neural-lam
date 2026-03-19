@@ -142,6 +142,3 @@ Module Contents
 
    .. py:attribute:: base_path
       :value: 'autoapi'
-
-
-

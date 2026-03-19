@@ -147,7 +147,7 @@ Module Contents
       .. note::
 
          Some things to know:
-         
+
          - Lightning calls ``.backward()`` and ``.step()`` automatically in case of automatic optimization.
          - If a learning rate scheduler is specified in ``configure_optimizers()`` with key
            ``"interval"`` (default "epoch") in the scheduler configuration, Lightning will call
@@ -317,5 +317,3 @@ Module Contents
 
    .. py:attribute:: val_metrics
       :type:  Dict[str, List]
-
-

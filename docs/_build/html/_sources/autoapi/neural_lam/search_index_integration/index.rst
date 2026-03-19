@@ -230,6 +230,3 @@ Module Contents
 
    .. py:attribute:: search_index_path
       :value: None
-
-
-

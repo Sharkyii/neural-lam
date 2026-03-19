@@ -162,5 +162,3 @@ Module Contents
 
    :returns: * *str* -- Generated reStructuredText content for the module page.
              * **Validates** (*Requirements 2.1, 2.2*)
-
-

@@ -217,6 +217,3 @@ Module Contents
 
    .. py:attribute:: snapshot_path
       :value: None
-
-
-

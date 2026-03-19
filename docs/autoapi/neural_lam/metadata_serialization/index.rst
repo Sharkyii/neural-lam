@@ -82,5 +82,3 @@ Module Contents
 
 .. py:data:: HAS_YAML
    :value: True
-
-

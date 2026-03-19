@@ -118,7 +118,7 @@ Module Contents
 
    .. attribute:: cartopy.crs class.
 
-      
+
 
    .. attribute:: kwargs
 
@@ -126,7 +126,7 @@ Module Contents
 
    .. attribute:: type.
 
-      
+
 
 
    .. py:attribute:: class_name
@@ -135,5 +135,3 @@ Module Contents
 
    .. py:attribute:: kwargs
       :type:  Dict[str, Any]
-
-

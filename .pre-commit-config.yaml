@@ -17,6 +17,10 @@ repos:
     hooks:
       - id: codespell
         description: Check for spelling errors
+        args: [
+          "--skip=docs/_build,docs/autoapi,*.ipynb",
+          "--ignore-words-list=CrossReference"
+        ]
 
   - repo: https://github.com/psf/black
     rev: 25.11.0

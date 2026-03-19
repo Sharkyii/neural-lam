@@ -184,5 +184,3 @@ Module Contents
 
    :returns: * *ValidationReport* -- Validation report with any issues found.
              * **Validates** (*Requirement 6.2*)
-
-

@@ -148,5 +148,3 @@ Module Contents
 
    :returns: * *bool* -- True if the element should be included.
              * **Validates** (*Requirements 1.5, 7.1*)
-
-

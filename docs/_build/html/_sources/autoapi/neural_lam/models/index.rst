@@ -16,5 +16,3 @@ Submodules
    /autoapi/neural_lam/models/graph_lam/index
    /autoapi/neural_lam/models/hi_lam/index
    /autoapi/neural_lam/models/hi_lam_parallel/index
-
-

@@ -24,5 +24,3 @@ Submodules
    /autoapi/neural_lam/utils/index
    /autoapi/neural_lam/vis/index
    /autoapi/neural_lam/weather_dataset/index
-
-

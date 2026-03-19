@@ -218,5 +218,3 @@ Module Contents
 
    :returns: Dictionary with keys 'classes' and 'functions' containing extracted metadata.
    :rtype: dict
-
-

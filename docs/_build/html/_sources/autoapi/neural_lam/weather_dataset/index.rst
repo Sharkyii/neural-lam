@@ -201,6 +201,3 @@ Module Contents
 
    .. py:attribute:: split
       :value: 'train'
-
-
-

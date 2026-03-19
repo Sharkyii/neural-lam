@@ -102,5 +102,3 @@ Module Contents
 
 
    .. py:attribute:: output_map
-
-

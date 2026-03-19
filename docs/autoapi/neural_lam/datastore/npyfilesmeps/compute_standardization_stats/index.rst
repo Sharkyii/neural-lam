@@ -96,5 +96,3 @@ Module Contents
 .. py:function:: setup(rank, world_size)
 
    Initialize the distributed group.
-
-

@@ -156,5 +156,3 @@ Module Contents
 
    :returns: The Neural-LAM configuration and the loaded datastore.
    :rtype: tuple[NeuralLAMConfig, Union[MDPDatastore, NpyFilesDatastoreMEPS]]
-
-

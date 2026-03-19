@@ -28,4 +28,3 @@ Package Contents
 .. py:data:: DATASTORES
 
 .. py:data:: DATASTORE_CLASSES
-

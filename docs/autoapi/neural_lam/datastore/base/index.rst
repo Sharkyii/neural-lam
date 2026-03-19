@@ -450,5 +450,3 @@ Module Contents
 
    .. py:attribute:: y
       :type:  int
-
-

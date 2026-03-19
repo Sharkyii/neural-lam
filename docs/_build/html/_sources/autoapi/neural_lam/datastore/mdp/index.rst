@@ -221,5 +221,3 @@ Module Contents
 
       :returns: The length of the time steps as a datetime.timedelta object.
       :rtype: timedelta
-
-

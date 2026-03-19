@@ -181,5 +181,3 @@ Module Contents
       'module', 'class', 'function'.
 
       :type: Type
-
-
