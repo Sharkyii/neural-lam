@@ -28,22 +28,28 @@ class InteractionNet(pyg.nn.MessagePassing):
         aggr="sum",
     ):
         """
-        Create a new InteractionNet
+        Create a new InteractionNet.
 
-        edge_index: (2,M), Edges in pyg format
-        input_dim: Dimensionality of input representations,
-            for both nodes and edges
-        update_edges: If new edge representations should be computed
-            and returned
-        hidden_layers: Number of hidden layers in MLPs
-        hidden_dim: Dimensionality of hidden layers, if None then same
-            as input_dim
-        edge_chunk_sizes: List of chunks sizes to split edge representation
-            into and use separate MLPs for (None = no chunking, same MLP)
-        aggr_chunk_sizes: List of chunks sizes to split aggregated node
-            representation into and use separate MLPs for
-            (None = no chunking, same MLP)
-        aggr: Message aggregation method (sum/mean)
+        Parameters
+        ----------
+        edge_index : torch.Tensor
+            Shape ``(2, M)``, edges in pyg format.
+        input_dim : int
+            Dimensionality of input representations for both nodes and edges.
+        update_edges : bool
+            If True, compute and return new edge representations.
+        hidden_layers : int
+            Number of hidden layers in MLPs.
+        hidden_dim : int or None
+            Dimensionality of hidden layers; defaults to ``input_dim`` if None.
+        edge_chunk_sizes : list of int or None
+            Chunk sizes to split edge representation into for separate MLPs.
+            None means no chunking (same MLP for all).
+        aggr_chunk_sizes : list of int or None
+            Chunk sizes to split aggregated node representation into for
+            separate MLPs. None means no chunking.
+        aggr : str
+            Message aggregation method, either ``"sum"`` or ``"mean"``.
         """
         assert aggr in ("sum", "mean"), f"Unknown aggregation method: {aggr}"
         super().__init__(aggr=aggr)
@@ -85,17 +91,24 @@ class InteractionNet(pyg.nn.MessagePassing):
 
     def forward(self, send_rep, rec_rep, edge_rep):
         """
-        Apply interaction network to update the representations of receiver
-        nodes, and optionally the edge representations.
+        Apply interaction network to update receiver node representations.
 
-        send_rep: (N_send, d_h), vector representations of sender nodes
-        rec_rep: (N_rec, d_h), vector representations of receiver nodes
-        edge_rep: (M, d_h), vector representations of edges used
+        Parameters
+        ----------
+        send_rep : torch.Tensor
+            Shape ``(N_send, d_h)``, vector representations of sender nodes.
+        rec_rep : torch.Tensor
+            Shape ``(N_rec, d_h)``, vector representations of receiver nodes.
+        edge_rep : torch.Tensor
+            Shape ``(M, d_h)``, vector representations of edges.
 
-        Returns:
-        rec_rep: (N_rec, d_h), updated vector representations of receiver nodes
-        (optionally) edge_rep: (M, d_h), updated vector representations
-            of edges
+        Returns
+        -------
+        rec_rep : torch.Tensor
+            Shape ``(N_rec, d_h)``, updated receiver node representations.
+        edge_rep : torch.Tensor, optional
+            Shape ``(M, d_h)``, updated edge representations.
+            Only returned when ``update_edges=True``.
         """
         # Always concatenate to [rec_nodes, send_nodes] for propagation,
         # but only aggregate to rec_nodes
@@ -149,12 +162,17 @@ class SplitMLPs(nn.Module):
 
     def forward(self, x):
         """
-        Chunk up input and feed through MLPs
+        Chunk up input and feed through MLPs.
 
-        x: (..., N, d), where N = sum(chunk_sizes)
+        Parameters
+        ----------
+        x : torch.Tensor
+            Shape ``(..., N, d)`` where ``N = sum(chunk_sizes)``.
 
-        Returns:
-        joined_output: (..., N, d), concatenated results from the MLPs
+        Returns
+        -------
+        torch.Tensor
+            Shape ``(..., N, d)``, concatenated results from the MLPs.
         """
         chunks = torch.split(x, self.chunk_sizes, dim=-2)
         chunk_outputs = [

@@ -244,7 +244,9 @@ class ARModel(pl.LightningModule):
             # forcing_mean shape: (num_forcing_vars,)
             # Need to repeat each mean/std value window_size times
             window_size = forcing.shape[-1] // self.forcing_mean.shape[-1]
-            forcing_mean_tiled = self.forcing_mean.repeat_interleave(window_size)
+            forcing_mean_tiled = self.forcing_mean.repeat_interleave(
+                window_size
+            )
             forcing_std_tiled = self.forcing_std.repeat_interleave(window_size)
             forcing = (forcing - forcing_mean_tiled) / forcing_std_tiled
 
@@ -266,19 +268,31 @@ class ARModel(pl.LightningModule):
 
     def predict_step(self, prev_state, prev_prev_state, forcing):
         """
-        Step state one step ahead using prediction model, X_{t-1}, X_t -> X_t+1
-        prev_state: (B, num_grid_nodes, feature_dim), X_t prev_prev_state: (B,
-        num_grid_nodes, feature_dim), X_{t-1} forcing: (B, num_grid_nodes,
-        forcing_dim)
+        Step state one step ahead using prediction model.
+
+        Parameters
+        ----------
+        prev_state : torch.Tensor
+            Shape ``(B, num_grid_nodes, feature_dim)``, state at time t.
+        prev_prev_state : torch.Tensor
+            Shape ``(B, num_grid_nodes, feature_dim)``, state at time t-1.
+        forcing : torch.Tensor
+            Shape ``(B, num_grid_nodes, forcing_dim)``.
         """
         raise NotImplementedError("No prediction step implemented")
 
     def unroll_prediction(self, init_states, forcing_features, true_states):
         """
-        Roll out prediction taking multiple autoregressive steps with model
-        init_states: (B, 2, num_grid_nodes, d_f) forcing_features: (B,
-        pred_steps, num_grid_nodes, d_static_f) true_states: (B, pred_steps,
-        num_grid_nodes, d_f)
+        Roll out prediction taking multiple autoregressive steps with model.
+
+        Parameters
+        ----------
+        init_states : torch.Tensor
+            Shape ``(B, 2, num_grid_nodes, d_f)``.
+        forcing_features : torch.Tensor
+            Shape ``(B, pred_steps, num_grid_nodes, d_static_f)``.
+        true_states : torch.Tensor
+            Shape ``(B, pred_steps, num_grid_nodes, d_f)``.
         """
         prev_prev_state = init_states[:, 0]
         prev_state = init_states[:, 1]
@@ -324,11 +338,19 @@ class ARModel(pl.LightningModule):
 
     def common_step(self, batch):
         """
-        Predict on single batch batch consists of: init_states: (B, 2,
-        num_grid_nodes, d_features) target_states: (B, pred_steps,
-        num_grid_nodes, d_features) forcing_features: (B, pred_steps,
-        num_grid_nodes, d_forcing),
-            where index 0 corresponds to index 1 of init_states
+        Predict on a single batch.
+
+        Parameters
+        ----------
+        batch : tuple
+            Contains ``(init_states, target_states, forcing_features,
+            batch_times)`` where:
+
+            - ``init_states``: ``(B, 2, num_grid_nodes, d_features)``
+            - ``target_states``: ``(B, pred_steps, num_grid_nodes, d_features)``
+            - ``forcing_features``: ``(B, pred_steps, num_grid_nodes, d_forcing)``
+              where index 0 corresponds to index 1 of init_states
+            - ``batch_times``: time indices for the batch
         """
         (init_states, target_states, forcing_features, batch_times) = batch
 
@@ -366,12 +388,17 @@ class ARModel(pl.LightningModule):
 
     def all_gather_cat(self, tensor_to_gather):
         """
-        Gather tensors across all ranks, and concatenate across dim. 0 (instead
-        of stacking in new dim. 0)
+        Gather tensors across all ranks and concatenate across dim 0.
 
-        tensor_to_gather: (d1, d2, ...), distributed over K ranks
+        Parameters
+        ----------
+        tensor_to_gather : torch.Tensor
+            Shape ``(d1, d2, ...)``, distributed over K ranks.
 
-        returns: (K*d1, d2, ...)
+        Returns
+        -------
+        torch.Tensor
+            Shape ``(K*d1, d2, ...)``.
         """
         return self.all_gather(tensor_to_gather).flatten(0, 1)
 
@@ -511,12 +538,19 @@ class ARModel(pl.LightningModule):
 
     def plot_examples(self, batch, n_examples, split, prediction=None):
         """
-        Plot the first n_examples forecasts from batch
+        Plot the first n_examples forecasts from batch.
 
-        batch: batch with data to plot corresponding forecasts for n_examples:
-        number of forecasts to plot prediction: (B, pred_steps, num_grid_nodes,
-        d_f), existing prediction.
-            Generate if None.
+        Parameters
+        ----------
+        batch : tuple
+            Batch with data to plot corresponding forecasts for.
+        n_examples : int
+            Number of forecasts to plot.
+        split : str
+            Data split name (e.g. ``"test"``).
+        prediction : torch.Tensor or None
+            Shape ``(B, pred_steps, num_grid_nodes, d_f)``, existing
+            prediction. Generated from batch if None.
         """
         if prediction is None:
             prediction, target, _, _ = self.common_step(batch)
@@ -638,14 +672,23 @@ class ARModel(pl.LightningModule):
 
     def create_metric_log_dict(self, metric_tensor, prefix, metric_name):
         """
-        Put together a dict with everything to log for one metric. Also saves
-        plots as pdf and csv if using test prefix.
+        Put together a dict with everything to log for one metric.
 
-        metric_tensor: (pred_steps, d_f), metric values per time and variable
-        prefix: string, prefix to use for logging metric_name: string, name of
-        the metric
+        Also saves plots as PDF and CSV if using test prefix.
 
-        Return: log_dict: dict with everything to log for given metric
+        Parameters
+        ----------
+        metric_tensor : torch.Tensor
+            Shape ``(pred_steps, d_f)``, metric values per time and variable.
+        prefix : str
+            Prefix to use for logging (e.g. ``"val"`` or ``"test"``).
+        metric_name : str
+            Name of the metric.
+
+        Returns
+        -------
+        dict
+            Dictionary with everything to log for the given metric.
         """
         log_dict = {}
         metric_fig = vis.plot_error_map(
@@ -680,11 +723,15 @@ class ARModel(pl.LightningModule):
 
     def aggregate_and_plot_metrics(self, metrics_dict, prefix):
         """
-        Aggregate and create error map plots for all metrics in metrics_dict
+        Aggregate and create error map plots for all metrics in metrics_dict.
 
-        metrics_dict: dictionary with metric_names and list of tensors
-            with step-evals.
-        prefix: string, prefix to use for logging
+        Parameters
+        ----------
+        metrics_dict : dict
+            Dictionary mapping metric names to lists of tensors with
+            step-evals.
+        prefix : str
+            Prefix to use for logging (e.g. ``"val"`` or ``"test"``).
         """
         log_dict = {}
         for metric_name, metric_val_list in metrics_dict.items():

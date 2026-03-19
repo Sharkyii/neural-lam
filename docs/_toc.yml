@@ -1,0 +1,27 @@
+# docs/_toc.yml
+format: jb-book
+root: intro
+
+parts:
+  - caption: "Overview"
+    chapters:
+      - file: architecture
+      - file: developer_guide
+
+  - caption: "Tutorials"
+    chapters:
+      - file: tutorials/01_getting_started
+        title: "Tutorial 1: Getting Started"
+      - file: tutorials/02_data_preparation
+        title: "Tutorial 2: Data Preparation"
+      - file: tutorials/03_graph_creation
+        title: "Tutorial 3: Graph Creation"
+      - file: tutorials/04_training_advanced
+        title: "Tutorial 4: Advanced Training"
+      - file: notebooks/create_reduced_meps_dataset
+        title: "Notebook: Create MEPS Dataset"
+
+  - caption: "API Reference"
+    chapters:
+      - file: autoapi/index
+        title: "API Reference"
