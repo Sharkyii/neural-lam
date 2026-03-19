@@ -403,6 +403,33 @@ class ARModel(pl.LightningModule):
         """
         return self.all_gather(tensor_to_gather).flatten(0, 1)
 
+    def _safe_all_gather_cat(self, tensor_to_gather):
+        """
+        Gather tensors across all ranks and concatenate across dim 0.
+
+        Works correctly with both single and multiple devices. On a single
+        device ``all_gather`` returns the tensor unchanged (no extra leading
+        dimension), so we add one before flattening to keep the shape
+        consistent.
+
+        Parameters
+        ----------
+        tensor_to_gather : torch.Tensor
+            Shape ``(d1, d2, ...)``, distributed over K ranks.
+
+        Returns
+        -------
+        torch.Tensor
+            Shape ``(K*d1, d2, ...)``.
+        """
+        gathered = self.all_gather(tensor_to_gather)
+        # all_gather on multiple devices adds a leading dim (K, d1, ...),
+        # but on a single device it returns (d1, ...) unchanged.
+        if gathered.shape == tensor_to_gather.shape:
+            # single device: add the missing leading dim before flattening
+            gathered = gathered.unsqueeze(0)
+        return gathered.flatten(0, 1)
+
     # newer lightning versions requires batch_idx argument, even if unused
     # pylint: disable-next=unused-argument
     def validation_step(self, batch, batch_idx):
@@ -736,7 +763,7 @@ class ARModel(pl.LightningModule):
         """
         log_dict = {}
         for metric_name, metric_val_list in metrics_dict.items():
-            metric_tensor = self.all_gather_cat(
+            metric_tensor = self._safe_all_gather_cat(
                 torch.cat(metric_val_list, dim=0)
             )  # (N_eval, pred_steps, d_f)
 
@@ -790,7 +817,7 @@ class ARModel(pl.LightningModule):
         self.aggregate_and_plot_metrics(self.test_metrics, prefix="test")
 
         # Plot spatial loss maps
-        spatial_loss_tensor = self.all_gather_cat(
+        spatial_loss_tensor = self._safe_all_gather_cat(
             torch.cat(self.spatial_loss_maps, dim=0)
         )  # (N_test, N_log, num_grid_nodes)
         if self.trainer.is_global_zero:

@@ -166,9 +166,14 @@ def test_single_batch(datastore_name, split):
     """
     datastore = init_datastore_example(datastore_name)
 
-    device_name = (
-        torch.device("cuda") if torch.cuda.is_available() else "cpu"
-    )  # noqa
+    try:
+        if torch.cuda.is_available():
+            torch.zeros(1).cuda()  # verify CUDA actually works
+            device_name = torch.device("cuda")
+        else:
+            device_name = "cpu"
+    except RuntimeError:
+        device_name = "cpu"
 
     graph_name = "1level"
 

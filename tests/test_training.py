@@ -1,4 +1,5 @@
 # Standard library
+import os
 from pathlib import Path
 
 # Third-party
@@ -29,22 +30,32 @@ def run_simple_training(datastore, set_output_std):
         If --output_std should be set during training
     """
 
-    if torch.cuda.is_available():
+    # Probe CUDA before any initialization to detect broken drivers.
+    # If CUDA is unavailable or broken, hide the GPU from Lightning entirely
+    # so that neither the Trainer nor DataLoader workers try to use it.
+    _cuda_ok = False
+    try:
+        if torch.cuda.is_available():
+            torch.zeros(1).cuda()
+            _cuda_ok = True
+    except RuntimeError:
+        pass
+
+    if _cuda_ok:
         device_name = "cuda"
-        torch.set_float32_matmul_precision(
-            "high"
-        )  # Allows using Tensor Cores on A100s
+        torch.set_float32_matmul_precision("high")
+        num_devices = torch.cuda.device_count()
     else:
         device_name = "cpu"
+        num_devices = 1
+        # Prevent Lightning and DataLoader workers from touching CUDA
+        os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
     trainer = pl.Trainer(
         max_epochs=1,
         deterministic=True,
         accelerator=device_name,
-        # XXX: `devices` has to be set to 2 otherwise
-        # neural_lam.models.ar_model.ARModel.aggregate_and_plot_metrics fails
-        # because it expects to aggregate over multiple devices
-        devices=2,
+        devices=num_devices,
         log_every_n_steps=1,
         # use `detect_anomaly` to ensure that we don't have NaNs popping up
         # during training

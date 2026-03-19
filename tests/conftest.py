@@ -4,6 +4,18 @@ from datetime import timedelta
 from pathlib import Path
 
 # Third-party
+import torch
+
+# Disable CUDA entirely if it's broken (e.g. driver mismatch on Blackwell GPUs).
+# This must happen before any other torch/lightning imports so that DataLoader
+# worker subprocesses also inherit the clean environment.
+try:
+    if torch.cuda.is_available():
+        torch.zeros(1).cuda()
+except RuntimeError:
+    os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
+# Third-party
 import pooch
 import yaml
 
